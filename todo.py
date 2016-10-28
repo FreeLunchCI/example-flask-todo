@@ -20,6 +20,7 @@ from rethinkdb.errors import RqlRuntimeError, RqlDriverError
 # RethinkDB server.
 RDB_HOST =  os.environ.get('RDB_HOST') or 'localhost'
 RDB_PORT = os.environ.get('RDB_PORT') or 28015
+APP_PORT = os.environ.get('APP_PORT') or 3000
 TODO_DB = 'todoapp'
 
 #### Setting up the app database
@@ -34,9 +35,10 @@ def dbSetup():
     try:
         r.db_create(TODO_DB).run(connection)
         r.db(TODO_DB).table_create('todos').run(connection)
-        print 'Database setup completed. Now run the app without --setup.'
+        print('* Database setup completed. Now run the app without --setup.')
     except RqlRuntimeError:
-        print 'App database already exists. Run the app without --setup.'
+        #print('* App database already exists. Run the app without --setup.')
+        print('* App database already exists, skipping...')
     finally:
         connection.close()
 
@@ -46,9 +48,9 @@ app.config.from_object(__name__)
 
 #### Managing connections
 
-# The pattern we're using for managing database connections is to have **a connection per request**. 
-# We're using Flask's `@app.before_request` and `@app.teardown_request` for 
-# [opening a database connection](http://www.rethinkdb.com/api/python/connect/) and 
+# The pattern we're using for managing database connections is to have **a connection per request**.
+# We're using Flask's `@app.before_request` and `@app.teardown_request` for
+# [opening a database connection](http://www.rethinkdb.com/api/python/connect/) and
 # [closing it](http://www.rethinkdb.com/api/python/close/) respectively.
 @app.before_request
 def before_request():
@@ -72,7 +74,7 @@ def teardown_request(exception):
 # command to query the database in response to a GET request from the
 # browser. When `table(table_name)` isn't followed by an additional
 # command, it returns all documents in the table.
-#    
+#
 # Running the query returns an iterator that automatically streams
 # data from the server in efficient batches.
 @app.route("/todos", methods=['GET'])
@@ -88,7 +90,7 @@ def get_todos():
 #
 # The `insert` operation returns a single object specifying the number
 # of successfully created objects and their corresponding IDs:
-# 
+#
 # ```
 # {
 #   "inserted": 1,
@@ -160,10 +162,19 @@ if __name__ == "__main__":
     parser.add_argument('--setup', dest='run_setup', action='store_true')
 
     args = parser.parse_args()
+
+    print('* RDB_HOST: %s' % RDB_HOST)
+    print('* RDB_PORT: %s' % RDB_PORT)
+
     if args.run_setup:
         dbSetup()
+        app.run(host='0.0.0.0', port=APP_PORT, debug=True)
     else:
-        app.run(debug=True)
+        #print('## RDB_HOST: %s' % RDB_HOST)
+        #print('## RDB_PORT: %s' % RDB_PORT)
+        print('* APP_PORT: %s' % APP_PORT)
+        dbSetup()
+        app.run(host='0.0.0.0', port=APP_PORT, debug=True)
 
 
 # ### Best practices ###
@@ -172,7 +183,7 @@ if __name__ == "__main__":
 #
 # The RethinkDB server doesn't use a thread-per-connnection approach
 # so opening connections per request will not slow down your database.
-# 
+#
 # #### Fetching multiple rows: batched iterators ####
 #
 # When fetching multiple rows from a table, RethinkDB returns a
@@ -180,16 +191,16 @@ if __name__ == "__main__":
 # result. Once the end of the current batch is reached, a new batch is
 # automatically retrieved from the server. From a coding point of view
 # this is transparent:
-#   
+#
 #     for result in r.table('todos').run(g.rdb_conn):
 #         print result
-#     
-#    
+#
+#
 # #### `replace` vs `update` ####
 #
 # Both `replace` and `update` operations can be used to modify one or
 # multiple rows. Their behavior is different:
-#    
+#
 # *   `replace` will completely replace the existing rows with new values
 # *   `update` will merge existing rows with the new values
 

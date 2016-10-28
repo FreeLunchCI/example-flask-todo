@@ -1,62 +1,65 @@
-# What is it #
+# Example Flask Todo App
 
-A demo web application in the spirit of [TodoMVC](http://addyosmani.github.com/todomvc/) showing how to use **RethinkDB as a backend for Flask and Backbone.js applications**.
+This is an example todo app. The app was built as an example/reference application, primarily for use with freelunchci.
 
-As any todo application, this one implements the following functionality:
+This app is dockerized and will be kubernetized and freelunchized ;-)
 
-* Managing database connections
-* List existing todos
-* Create new todo
-* Retrieve a single todo
-* Edit a todo or mark a todo as done
-* Delete a todo
-
-One feature we've left out as an exercise is making this Flask todo app force  users to complete their tasks. In time.
-
-# Complete stack #
-
-* [Flask](http://flask.pocoo.org)
-* [Backbone](http://backbonejs.org)
-* [RethinkDB](http://www.rethinkdb.com)
-
-# Installation #
-
-```
-git clone git://github.com/rethinkdb/rethinkdb-example-flask-backbone-todo.git
-pip install Flask
-pip install rethinkdb
-```
-
-# Start RethinkDB #
-
-Make sure you have RethinkDB running.  
-If you are not running RethinkDB on your local machine with the default settings,
-update the `todo.py` file on lines 21 and 22.
-
-_Note_: If you don't have RethinkDB installed, you can follow [these instructions to get it up and running](http://www.rethinkdb.com/docs/install/). 
+## TODO
+* get db init piece to be normal (not need the -s build...-d run...)
+* merge over the needed things from README.md into this readme
+* commit and push things
 
 
 
-# Running the application #
+## Stack
+* web:   alpine:edge (flask, backbone)
+* db:    rethinkdb:2.3
 
 
-
-Firstly we'll need to create the database `todoapp` and the table used by this app: `todos`. You can
-do this by running:
-
-```
-python todo.py --setup
-```
-
-Flask provides an easy way to run the app:
-
-```
-python todo.py
-```
-
-Then open a browser: <http://localhost:5000/>.
+## Notices
+* this app is not intended to be a production ready app or the base for a production app, its purpose is for example/demonstration usage only.
+* the `develop` branch has a freelunch.yml file created for you.
+* please see the docs directory for more documentation / information.
 
 
-# License #
+## Prerequisites
+* docker
+* docker-compose
 
-This demo application is licensed under the MIT license: <http://opensource.org/licenses/mit-license.php>
+
+## Setup
+* `docker-compose build`
+
+
+## Run
+* initialize database
+  - uncomment the `#command: /entrypoint.sh -s` line and comment the `command: /entrypoint.sh -d` line in the docker-compose.yml file
+  - build: `docker-compose build`
+  - now revert changes by commenting `#command: /entrypoint.sh -s` and and uncommenting the `command: /entrypoint.sh -d` line in the docker-compose.yml file
+* start up app: `docker-compose up`
+* TODO: make the above smoother....I would like this to be normal, init db if needed, otherwise just run.
+
+
+## View
+* go to: `http://localhost:3000`
+
+
+## Stop App
+* `Ctrl+C` if app is launched interactively or use `docker-componse kill` if launched as daemon (`-d`)
+
+
+## FLCI Testing
+* if you would like to change something in the app to cause a flci build you can update the app's version (config/environment.rb > APP_VERSION).
+
+
+## Tests
+* `docker-compose run -e "RAILS_ENV=test" web rails test test/models/todo_test.rb`
+
+
+## Attribution
+* this app came, in large part, from [rethinkdb's example fask-backbone-todo](https://github.com/rethinkdb/rethinkdb-example-flask-backbone-todo). Please see the README.md.original for the original README.md file along with the license.
+
+
+## Developer
+* any changes to the Gemfile or the Dockerfile necessitate a `docker-compose build`
+* get a rails console: `docker-compose run web rails console`
