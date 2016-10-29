@@ -39,7 +39,7 @@ This app is dockerized and will be kubernetized and freelunchized ;-)
 
 
 ## Test
-* `docker-compose run -e "RAILS_ENV=test" web rails test test/models/todo_test.rb`
+* unit testing is integrated into the app via the dockerfile, a normal docker run (`docker run -i -t --rm example-flask-todo`) and `docker-compose up` both execute all unit tests
 * for FLCI testing, increment the app's version and push to invoke a new build
   - application version: `APPVER in /todo.py`
 
