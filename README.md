@@ -27,6 +27,7 @@ This app is dockerized and will be kubernetized and freelunchized ;-)
 
 ## Run
 * start up app: `docker-compose up`
+* run via docker: `docker run -i -t -v /absolute/path/to/source:/app --rm example-flask-todo`
 
 
 ## View

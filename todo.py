@@ -159,6 +159,9 @@ def delete_todo(todo_id):
 def show_todos():
     return render_template('todo.html')
 
+@app.route("/test")
+def test():
+    return "Example Flask Todo: " + APPVER
 
 if __name__ == "__main__":
     dbSetup()
