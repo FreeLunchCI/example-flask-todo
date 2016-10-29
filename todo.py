@@ -21,6 +21,7 @@ from rethinkdb.errors import RqlRuntimeError, RqlDriverError
 RDB_HOST =  os.environ.get('RDB_HOST') or 'localhost'
 RDB_PORT = os.environ.get('RDB_PORT') or 28015
 APP_PORT = os.environ.get('APP_PORT') or 3000
+APPVER = '1.0.0'
 TODO_DB = 'todoapp'
 
 #### Setting up the app database
@@ -35,10 +36,9 @@ def dbSetup():
     try:
         r.db_create(TODO_DB).run(connection)
         r.db(TODO_DB).table_create('todos').run(connection)
-        print('* Database setup completed. Now run the app without --setup.')
+        print('* database setup completed...')
     except RqlRuntimeError:
-        #print('* App database already exists. Run the app without --setup.')
-        print('* App database already exists, skipping...')
+        print('* app database already exists, skipping...')
     finally:
         connection.close()
 
@@ -66,6 +66,9 @@ def teardown_request(exception):
     except AttributeError:
         pass
 
+@app.context_processor
+def get_appver():
+    return dict(get_appver=APPVER)
 
 #### Listing existing todos
 
@@ -158,23 +161,8 @@ def show_todos():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Run the Flask todo app')
-    parser.add_argument('--setup', dest='run_setup', action='store_true')
-
-    args = parser.parse_args()
-
-    print('* RDB_HOST: %s' % RDB_HOST)
-    print('* RDB_PORT: %s' % RDB_PORT)
-
-    if args.run_setup:
-        dbSetup()
-        app.run(host='0.0.0.0', port=APP_PORT, debug=True)
-    else:
-        #print('## RDB_HOST: %s' % RDB_HOST)
-        #print('## RDB_PORT: %s' % RDB_PORT)
-        print('* APP_PORT: %s' % APP_PORT)
-        dbSetup()
-        app.run(host='0.0.0.0', port=APP_PORT, debug=True)
+    dbSetup()
+    app.run(host='0.0.0.0', port=APP_PORT, debug=True)
 
 
 # ### Best practices ###

@@ -26,7 +26,6 @@ WORKDIR ${APP_DIR}
 EXPOSE 3000
 
 # copy config files into filesystem
-COPY entrypoint.sh /entrypoint.sh
 COPY requirements.txt /requirements.txt
 
 # install project requirements
@@ -35,3 +34,4 @@ RUN pip3 install -r /requirements.txt
 
 # exectute start up script
 CMD /entrypoint.sh -d
+ENTRYPOINT ["python", "todo.py"]

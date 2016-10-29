@@ -4,12 +4,6 @@ This is an example todo app. The app was built as an example/reference applicati
 
 This app is dockerized and will be kubernetized and freelunchized ;-)
 
-## TODO
-* get db init piece to be normal (not need the -s build...-d run...)
-* merge over the needed things from README.md into this readme
-* commit and push things
-
-
 
 ## Stack
 * web:   alpine:edge (flask, backbone)
@@ -32,12 +26,7 @@ This app is dockerized and will be kubernetized and freelunchized ;-)
 
 
 ## Run
-* initialize database
-  - uncomment the `#command: /entrypoint.sh -s` line and comment the `command: /entrypoint.sh -d` line in the docker-compose.yml file
-  - build: `docker-compose build`
-  - now revert changes by commenting `#command: /entrypoint.sh -s` and and uncommenting the `command: /entrypoint.sh -d` line in the docker-compose.yml file
 * start up app: `docker-compose up`
-* TODO: make the above smoother....I would like this to be normal, init db if needed, otherwise just run.
 
 
 ## View
@@ -48,16 +37,14 @@ This app is dockerized and will be kubernetized and freelunchized ;-)
 * `Ctrl+C` if app is launched interactively or use `docker-componse kill` if launched as daemon (`-d`)
 
 
-## FLCI Testing
-* if you would like to change something in the app to cause a flci build you can update the app's version (config/environment.rb > APP_VERSION).
-
-
-## Tests
+## Test
 * `docker-compose run -e "RAILS_ENV=test" web rails test test/models/todo_test.rb`
+* for FLCI testing, increment the app's version and push to invoke a new build
+  - application version: `APPVER in /todo.py`
 
 
 ## Attribution
-* this app came, in large part, from [rethinkdb's example fask-backbone-todo](https://github.com/rethinkdb/rethinkdb-example-flask-backbone-todo). Please see the README.md.original for the original README.md file along with the license.
+This app came, in large part, from [rethinkdb's example fask-backbone-todo](https://github.com/rethinkdb/rethinkdb-example-flask-backbone-todo). Please see the README.md.original for the original README.md file along with the license.
 
 
 ## Developer

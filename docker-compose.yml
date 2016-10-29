@@ -10,10 +10,7 @@ services:
     container_name: example-flask-todo
     # all env items should be in .env
     env_file: .env
-    # start the app in 'setup' mode (to create the db)
-    command: /entrypoint.sh -s
-    # start the app in 'debug' (using internal flask server) mode.
-    #command: /entrypoint.sh -d
+    entrypoint: ["python", "todo.py"]
     volumes:
       - ./:/app
     ports:
